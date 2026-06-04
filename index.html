@@ -167,17 +167,17 @@ Hello, Tawla!</code></pre>
       <p>Tawla has <code>int</code>, 64-bit <code>float</code> (alias <code>double</code>), <code>bool</code>, and <code>string</code>. Use <code>var</code> to infer the type from the initializer, or declare without one to get a default (<code>0</code>, <code>false</code>, <code>null</code>). Comments are <code>// like this</code>.</p>
       <div class="code">
         <div class="code-head"><span class="dot"></span><span class="fname">basics.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
-        <pre><code class="twl">int count = 5;
+        <pre><code class="twl">int count = 67;
 float pi = 3.14159;       // float and double are the same 64-bit type
 bool ready = true;
-string name = "Ada";
+string name = "Ahmed";
 var inferred = 42;        // an int
 
 int x;                    // declared without a value -> 0
 bool flag;                // -> false
 
-print(count);             // 5
-print(name + "!");        // Ada!
+print(count);             // 67
+print(name + "!");        // Ahmed!
 print(7 / 2);             // 3   (integer division)
 print(7.0 / 2);           // 3.5 (a float makes it floating point)</code></pre>
       </div>
@@ -499,9 +499,9 @@ class Main {
         xs.set(1, 99);
 
         Map&lt;string, int&gt; ages = new Map&lt;string, int&gt;();
-        ages.put("ada", 36);
-        print(ages.has("ada"));    // true
-        print(ages.get("ada"));    // 36
+        ages.put("Ahmed", 36);
+        print(ages.has("Ahmed"));  // true
+        print(ages.get("Ahmed"));  // 36
     }
 }</code></pre>
       </div>
@@ -522,8 +522,8 @@ class Main {
         <div class="code-head"><span class="dot"></span><span class="fname">read.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
         <pre><code class="twl">import "Json.twl";
 
-Json d = parseJson("{\"name\": \"Ada\", \"tags\": [\"twl\", \"py\"]}");
-print(d.get("name").asString());        // Ada
+Json d = parseJson("{\"name\": \"Ahmed\", \"tags\": [\"twl\", \"py\"]}");
+print(d.get("name").asString());        // Ahmed
 print(d.get("tags").size());            // 2
 print(d.get("tags").at(0).asString());  // twl
 if (d.get("admin").isNull()) { print("no admin field"); }</code></pre>
@@ -586,7 +586,7 @@ class Main {
         }
 
         Json payload = jsonObject();
-        payload.setString("name", "ada");
+        payload.setString("name", "Ahmed");
         Response created = httpRequest("POST", "http://localhost:8080/users", payload.toString());
         print(created.status());
     }
