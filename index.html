@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tawla — a small C#-style language with an LLVM JIT</title>
+<meta name="description" content="Documentation for Tawla, a small statically-typed, object-oriented programming language with its own LLVM-JIT compiler (tawlac). Install with pip." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="assets/styles.css" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2322c55e'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='20' font-weight='700' text-anchor='middle' fill='%23042410'%3Et%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Toggle navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <a class="brand" href="#overview">
+    <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#22c55e"/><text x="16" y="23" font-family="monospace" font-size="20" font-weight="700" text-anchor="middle" fill="#042410">t</text></svg>
+    Tawla <span class="ver">1.3</span>
+  </a>
+
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="search" type="search" placeholder="Search the docs…  (press /)" aria-label="Search documentation" autocomplete="off" />
+  </div>
+
+  <nav class="topbar-actions">
+    <a class="icon-btn" href="https://github.com/HaddajiDev/tawla-lang" target="_blank" rel="noopener" aria-label="GitHub repository">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-1.8c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0C18 4.6 19 4.9 19 4.9c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
+    </a>
+    <a class="icon-btn" href="https://pypi.org/project/tawla/" target="_blank" rel="noopener" aria-label="PyPI package">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7L12 12l8.7-5M12 22V12"/></svg>
+    </a>
+    <button id="theme-btn" class="icon-btn" aria-label="Toggle light/dark theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </nav>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-group">
+      <h4>Getting started</h4>
+      <a href="#overview">Overview</a>
+      <a href="#install">Install</a>
+      <a href="#hello">Hello, Tawla</a>
+    </div>
+    <div class="nav-group">
+      <h4>Language guide</h4>
+      <a href="#basics">Basics &amp; types</a>
+      <a href="#operators">Operators</a>
+      <a href="#control-flow">Control flow</a>
+      <a href="#functions">Functions</a>
+      <a href="#classes">Classes</a>
+      <a href="#encapsulation">Encapsulation</a>
+      <a href="#inheritance">Inheritance</a>
+      <a href="#interfaces">Interfaces</a>
+      <a href="#abstract">Abstract classes</a>
+      <a href="#generics">Generics</a>
+      <a href="#null">Null &amp; defaults</a>
+      <a href="#arrays">Arrays</a>
+      <a href="#strings">Strings</a>
+    </div>
+    <div class="nav-group">
+      <h4>Standard library</h4>
+      <a href="#io">IO</a>
+      <a href="#collections">Collections</a>
+      <a href="#json">JSON</a>
+      <a href="#http">HTTP server</a>
+      <a href="#fetch">HTTP client (fetch)</a>
+    </div>
+    <div class="nav-group">
+      <h4>Reference</h4>
+      <a href="#builtins">Builtins</a>
+      <a href="#gc">Garbage collection</a>
+      <a href="#projects">Projects &amp; CLI</a>
+    </div>
+    <p class="no-results">No matching topics.</p>
+  </aside>
+
+  <div class="scrim"></div>
+
+  <main class="content">
+   <div class="content-inner">
+
+    <!-- HERO -->
+    <section id="overview" class="hero">
+      <h1>Tawla is a small language that<br><span class="grad">compiles to real machine code.</span></h1>
+      <p class="tagline">A statically-typed, object-oriented language in the spirit of C# — classes, interfaces, generics, garbage collection — turned straight into native code by an LLVM JIT and run on the spot. Source files end in <code>.twl</code>.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#install">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+          Install Tawla
+        </a>
+        <a class="btn btn-ghost" href="#hello">Read the guide</a>
+        <a class="btn btn-ghost" href="https://github.com/HaddajiDev/tawla-lang" target="_blank" rel="noopener">View source</a>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+          <h3>JIT-compiled</h3>
+          <p>LLVM turns your code into machine code and runs it immediately — no separate build step.</p>
+        </div>
+        <div class="feature">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          <h3>Truly OOP</h3>
+          <p>Classes, inheritance, interfaces, abstract classes, generics, and encapsulation.</p>
+        </div>
+        <div class="feature">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+          <h3>Batteries included</h3>
+          <p>A standard library — collections, JSON, an HTTP server and client — much of it written in Tawla itself.</p>
+        </div>
+        <div class="feature">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7L9 18l-5-5"/></svg>
+          <h3>Safe by default</h3>
+          <p>Static type checking, array bounds checks, and clear null-reference errors instead of crashes.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSTALL -->
+    <section id="install">
+      <h2>Install</h2>
+      <p>You need <strong>Python 3.11+</strong>. Tawla ships on PyPI and pulls in everything it needs (including LLVM, via <code>llvmlite</code>). Works on Windows, macOS, and Linux.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">terminal</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="shell">$ pip install tawla</code></pre>
+      </div>
+      <p>That gives you the <code>tawlac</code> command (and <code>python -m tawla</code>):</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">terminal</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="shell">$ tawlac run app.twl     # compile and run a file
+$ tawlac new myapp       # scaffold a new project
+$ tawlac version         # print the version
+$ tawlac help            # or: tawlac help run</code></pre>
+      </div>
+    </section>
+
+    <!-- HELLO -->
+    <section id="hello">
+      <h2>Hello, Tawla</h2>
+      <p>A program is a set of classes. The runtime instantiates <code>Main</code> and calls its <code>main</code> method — or you can write loose top-level statements for quick scripts.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">hello.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">class Main {
+    void main() {
+        print("Hello, Tawla!");
+    }
+}</code></pre>
+      </div>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">terminal</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="shell">$ tawlac run hello.twl
+Hello, Tawla!</code></pre>
+      </div>
+      <div class="note"><strong>Tip:</strong> for a one-off, you can skip the class entirely — top-level statements run as the program body: <code>print(1 + 2);</code></div>
+      <hr class="section-rule" />
+    </section>
+
+    <!-- BASICS -->
+    <section id="basics">
+      <h2>Basics &amp; types</h2>
+      <p>Tawla has <code>int</code>, 64-bit <code>float</code> (alias <code>double</code>), <code>bool</code>, and <code>string</code>. Use <code>var</code> to infer the type from the initializer, or declare without one to get a default (<code>0</code>, <code>false</code>, <code>null</code>). Comments are <code>// like this</code>.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">basics.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">int count = 5;
+float pi = 3.14159;       // float and double are the same 64-bit type
+bool ready = true;
+string name = "Ada";
+var inferred = 42;        // an int
+
+int x;                    // declared without a value -> 0
+bool flag;                // -> false
+
+print(count);             // 5
+print(name + "!");        // Ada!
+print(7 / 2);             // 3   (integer division)
+print(7.0 / 2);           // 3.5 (a float makes it floating point)</code></pre>
+      </div>
+    </section>
+
+    <!-- OPERATORS -->
+    <section id="operators">
+      <h2>Operators</h2>
+      <p>The usual arithmetic (<code>+ - * /</code>) and comparisons (<code>== != &lt; &lt;= &gt; &gt;=</code>), boolean logic with short-circuit evaluation, and a conditional (ternary) expression.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">operators.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">bool ok = age &gt;= 18 &amp;&amp; verified;   // && and  || or  ! not
+bool any = retry || fallback;
+if (!found) { print("missing"); }
+
+// short-circuit: the right side is skipped when the left decides it,
+// so this never calls a method on a null reference:
+if (user != null &amp;&amp; user.active()) { print("hi"); }
+
+// ternary: cond ? a : b  (only the taken branch runs)
+int max = a &gt; b ? a : b;
+string label = n == 0 ? "zero" : n &lt; 10 ? "small" : "big";</code></pre>
+      </div>
+    </section>
+
+    <!-- CONTROL FLOW -->
+    <section id="control-flow">
+      <h2>Control flow</h2>
+      <p><code>if</code>/<code>else</code>, <code>while</code>, and a C-style <code>for</code> loop (its loop variable is scoped to the loop).</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">control.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">int sum = 0;
+for (int i = 1; i &lt;= 10; i = i + 1) {
+    sum = sum + i;
+}
+print(sum);               // 55
+
+int n = 8;
+while (n &gt; 1) {
+    if (n == 2 * (n / 2)) { n = n / 2; } else { n = 3 * n + 1; }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- FUNCTIONS -->
+    <section id="functions">
+      <h2>Functions</h2>
+      <p>Top-level functions take typed parameters and return a type (or <code>void</code>). Recursion works fine.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">functions.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">int factorial(int n) {
+    if (n &lt;= 1) { return 1; }
+    return n * factorial(n - 1);
+}
+
+void greet(string who) {
+    print("Hello, " + who);
+}
+
+print(factorial(5));      // 120
+greet("world");</code></pre>
+      </div>
+    </section>
+
+    <!-- CLASSES -->
+    <section id="classes">
+      <h2>Classes</h2>
+      <p>Classes have fields, methods, a constructor, and <code>this</code>. Objects live on the heap and are created with <code>new</code>.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">point.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">class Point {
+    private int x;
+    private int y;
+
+    public Point(int px, int py) {
+        this.x = px;
+        this.y = py;
+    }
+
+    public int sum() { return this.x + this.y; }
+}
+
+class Main {
+    void main() {
+        Point p = new Point(3, 4);
+        print(p.sum());       // 7
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ENCAPSULATION -->
+    <section id="encapsulation">
+      <h2>Encapsulation</h2>
+      <p>Members are <strong><code>private</code> by default</strong> (visible only inside the class). Mark them <code>public</code> to expose them, or <code>protected</code> to share with subclasses. Constructors are <code>public</code> by default. Access is checked at compile time.</p>
+      <table>
+        <thead><tr><th>Modifier</th><th>Visible from</th></tr></thead>
+        <tbody>
+          <tr><td><code>public</code></td><td>anywhere</td></tr>
+          <tr><td><code>protected</code></td><td>the class and its subclasses</td></tr>
+          <tr><td><code>private</code></td><td>the declaring class only</td></tr>
+        </tbody>
+      </table>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">counter.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">class Counter {
+    private int count;                          // hidden
+
+    public Counter() { this.count = 0; }
+    public void bump() { this.count = this.count + 1; }
+    public int value() { return this.count; }
+}
+
+class Main {
+    void main() {
+        Counter c = new Counter();
+        c.bump(); c.bump();
+        print(c.value());     // 2
+        // c.count here would be a compile error: count is private
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- INHERITANCE -->
+    <section id="inheritance">
+      <h2>Inheritance</h2>
+      <p>Use <code>:</code> to extend a class. Methods are virtual — the right one is chosen at runtime from the actual object type (vtables). Call the base constructor with <code>super(...)</code>.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">animals.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">class Animal {
+    protected int legs;
+    public Animal(int n) { this.legs = n; }
+    public int legCount() { return this.legs; }
+    public string speak() { return "..."; }
+}
+
+class Dog : Animal {
+    public Dog() { super(4); }
+    public string speak() { return "woof"; }   // override
+}
+
+class Main {
+    void main() {
+        Animal a = new Dog();      // static type Animal, runtime Dog
+        print(a.speak());          // woof  (dynamic dispatch)
+        print(a.legCount());       // 4
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- INTERFACES -->
+    <section id="interfaces">
+      <h2>Interfaces</h2>
+      <p>An interface is a set of method signatures any class can implement — even classes that share no common parent. List them after the <code>:</code>, alongside an optional base class.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">shapes.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">interface Shape {
+    int area();
+}
+
+class Square : Shape {
+    private int side;
+    public Square(int s) { this.side = s; }
+    public int area() { return this.side * this.side; }
+}
+
+int areaOf(Shape s) { return s.area(); }   // works for any Shape
+
+class Main {
+    void main() {
+        print(areaOf(new Square(5)));      // 25
+    }
+}</code></pre>
+      </div>
+      <div class="note">A class can extend one base class and implement any number of interfaces: <code>class Dog : Animal, Named, Greeter { ... }</code>. Methods that implement an interface must be <code>public</code>.</div>
+    </section>
+
+    <!-- ABSTRACT -->
+    <section id="abstract">
+      <h2>Abstract classes</h2>
+      <p>Mark a class <code>abstract</code> and leave some methods without a body for subclasses to fill in. You can't instantiate an abstract class directly.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">abstract.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">abstract class Animal {
+    public abstract int speak();          // no body
+    public int legs() { return 4; }       // concrete, inherited
+}
+
+class Cat : Animal {
+    public int speak() { return 2; }      // must implement
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- GENERICS -->
+    <section id="generics">
+      <h2>Generics</h2>
+      <p>Type-parameterize a class with <code>&lt;T&gt;</code>. Generics are <em>monomorphized</em>: each instantiation (e.g. <code>Box&lt;int&gt;</code>) is stamped out as a concrete class at compile time.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">box.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">class Box&lt;T&gt; {
+    private T value;
+    public Box(T v) { this.value = v; }
+    public T get() { return this.value; }
+}
+
+class Main {
+    void main() {
+        Box&lt;int&gt; n = new Box&lt;int&gt;(42);
+        print(n.get());                        // 42
+
+        var s = new Box&lt;string&gt;("boxed");      // var also works
+        print(s.get());                        // boxed
+    }
+}</code></pre>
+      </div>
+      <div class="note">First-cut generics cover classes with concrete type arguments. Nested generics like <code>Map&lt;string, List&lt;int&gt;&gt;</code> aren't supported yet.</div>
+    </section>
+
+    <!-- NULL -->
+    <section id="null">
+      <h2>Null &amp; defaults</h2>
+      <p>Reference types (objects, strings, arrays) can be <code>null</code>; value types (<code>int</code>, <code>float</code>, <code>bool</code>) cannot. Using a <code>null</code> — calling a method, reading a field, indexing — gives a clean <em>null reference</em> error instead of a crash.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">nullable.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">User u;                    // a declaration with no value -> null
+if (u == null) {
+    print("no user yet");
+}
+
+string name = u != null ? u.name() : "guest";   // safe with short-circuit/ternary</code></pre>
+      </div>
+    </section>
+
+    <!-- ARRAYS -->
+    <section id="arrays">
+      <h2>Arrays</h2>
+      <p>Fixed-size arrays with <code>new T[n]</code>, indexed with <code>a[i]</code> (bounds-checked), and <code>a.length</code>. Slots start zeroed.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">arrays.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">int[] a = new int[5];
+int i = 0;
+while (i &lt; a.length) {
+    a[i] = i * i;
+    i = i + 1;
+}
+print(a[4]);              // 16
+// a[9] would abort with "array index out of bounds"</code></pre>
+      </div>
+      <div class="note">For a growable list, use <code>List&lt;T&gt;</code> from <a href="#collections">Collections</a>.</div>
+    </section>
+
+    <!-- STRINGS -->
+    <section id="strings">
+      <h2>Strings</h2>
+      <p>String literals with escapes, <code>s.length</code>, <code>==</code>, and <code>+</code> to join. Plus a set of builtins for working with text.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">strings.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">string s = "hello";
+print(s.length);              // 5
+print(charAt(s, 0));          // 104  (the character code of 'h')
+print(substring(s, 1, 4));    // ell
+
+int n = toInt("40") + 2;
+print(toString(n));           // 42
+print(toFloat("3.5") * 2.0);  // 7</code></pre>
+      </div>
+    </section>
+    <hr class="section-rule" />
+
+    <!-- IO -->
+    <section id="io">
+      <h2>IO</h2>
+      <p class="lead">The standard library lives in modules you bring in with <code>import "Name.twl";</code>. They ship with the compiler.</p>
+      <p><code>IO.twl</code> reads input and writes prompts.</p>
+      <table>
+        <thead><tr><th>Function</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>readLine()</code></td><td>read a line of input as a string</td></tr>
+          <tr><td><code>readInt()</code></td><td>read a line and parse an int</td></tr>
+          <tr><td><code>readFloat()</code></td><td>read a line and parse a float</td></tr>
+          <tr><td><code>write(s)</code></td><td>print a string with no trailing newline (for prompts)</td></tr>
+        </tbody>
+      </table>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">greet.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">import "IO.twl";
+
+class Main {
+    void main() {
+        write("What's your name? ");
+        string name = readLine();
+        write("How old are you? ");
+        int age = readInt();
+        print("Hi " + name);
+        print(age + 1);          // your age next year
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- COLLECTIONS -->
+    <section id="collections">
+      <h2>Collections</h2>
+      <p><code>Collections.twl</code> gives you a growable <code>List&lt;T&gt;</code> and a key/value <code>Map&lt;K,V&gt;</code> — written in Tawla on top of arrays and generics.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">collections.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">import "Collections.twl";
+
+class Main {
+    void main() {
+        List&lt;int&gt; xs = new List&lt;int&gt;();
+        xs.add(10); xs.add(20); xs.add(30);
+        print(xs.size());          // 3
+        print(xs.get(1));          // 20
+        xs.set(1, 99);
+
+        Map&lt;string, int&gt; ages = new Map&lt;string, int&gt;();
+        ages.put("ada", 36);
+        print(ages.has("ada"));    // true
+        print(ages.get("ada"));    // 36
+    }
+}</code></pre>
+      </div>
+      <table>
+        <thead><tr><th>List&lt;T&gt;</th><th>Map&lt;K,V&gt;</th></tr></thead>
+        <tbody>
+          <tr><td><code>add(x)</code>, <code>get(i)</code>, <code>set(i, x)</code>, <code>size()</code></td><td><code>put(k, v)</code>, <code>get(k)</code>, <code>has(k)</code>, <code>size()</code>, <code>keys()</code></td></tr>
+        </tbody>
+      </table>
+      <div class="note"><code>Map.get</code> returns <code>null</code> for a missing object value, or the zero value for a number — pair it with <code>has(key)</code>.</div>
+    </section>
+
+    <!-- JSON -->
+    <section id="json">
+      <h2>JSON</h2>
+      <p><code>Json.twl</code> — a JSON parser and serializer written entirely in Tawla. Parse with <code>parseJson</code> and navigate the result; build with <code>jsonObject()</code>/<code>jsonArray()</code> and serialize with <code>toString()</code>.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">read.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">import "Json.twl";
+
+Json d = parseJson("{\"name\": \"Ada\", \"tags\": [\"twl\", \"py\"]}");
+print(d.get("name").asString());        // Ada
+print(d.get("tags").size());            // 2
+print(d.get("tags").at(0).asString());  // twl
+if (d.get("admin").isNull()) { print("no admin field"); }</code></pre>
+      </div>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">write.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">import "Json.twl";
+
+Json out = jsonObject();
+out.setString("status", "ok");
+out.setInt("count", 3);
+print(out.toString());                  // {"status":"ok","count":3}</code></pre>
+      </div>
+      <p>Read with <code>get</code>/<code>at</code>/<code>size</code> and <code>asInt</code>/<code>asFloat</code>/<code>asBool</code>/<code>asString</code> (plus <code>isNull</code>/<code>isArray</code>/<code>isObject</code>). Build with <code>setString</code>/<code>setInt</code>/<code>setFloat</code>/<code>setBool</code>/<code>set</code> and <code>pushString</code>/<code>push…</code>/<code>push</code>.</p>
+    </section>
+
+    <!-- HTTP -->
+    <section id="http">
+      <h2>HTTP server</h2>
+      <p><code>Http.twl</code> gives you a single-threaded HTTP server with Express-style routing. Implement the <code>Handler</code> interface, register routes on a <code>Router</code>, and <code>serve</code> it.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">server.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">import "Http.twl";
+
+class Health : Handler {
+    public void handle(Request req) { req.respond(200, "ok"); }
+}
+class Echo : Handler {
+    public void handle(Request req) { req.respond(200, req.body()); }
+}
+
+class Main {
+    void main() {
+        Router router = new Router();
+        router.get("/health", new Health());
+        router.post("/echo", new Echo());
+
+        print("listening on http://localhost:8080");
+        new Server(8080).serve(router);
+    }
+}</code></pre>
+      </div>
+      <p>A <code>Request</code> exposes <code>method()</code>, <code>path()</code>, <code>body()</code>, <code>respond(status, body)</code>, and <code>respondJson(status, body)</code> (which sends <code>application/json</code>). You can also drive the loop yourself with <code>server.accept()</code>.</p>
+    </section>
+
+    <!-- FETCH -->
+    <section id="fetch">
+      <h2>HTTP client (fetch)</h2>
+      <p>The client side, also in <code>Http.twl</code>. <code>fetch(url)</code> does a GET; <code>httpRequest(method, url, body)</code> does anything. Both return a <code>Response</code> with <code>status()</code> and <code>body()</code>. Network failures come back as <code>status() == 0</code>.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">client.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">import "Http.twl";
+import "Json.twl";
+
+class Main {
+    void main() {
+        Response r = fetch("http://localhost:8080/health");
+        if (r.status() == 200) {
+            print(r.body());
+        }
+
+        Json payload = jsonObject();
+        payload.setString("name", "ada");
+        Response created = httpRequest("POST", "http://localhost:8080/users", payload.toString());
+        print(created.status());
+    }
+}</code></pre>
+      </div>
+      <div class="note">Read a request body, parse its JSON, call another service, and respond with JSON — the whole loop, in a statically-typed JIT-compiled language whose parser and router are written in Tawla itself.</div>
+      <hr class="section-rule" />
+    </section>
+
+    <!-- BUILTINS -->
+    <section id="builtins">
+      <h2>Builtins</h2>
+      <p>Functions available everywhere without an import.</p>
+      <h3>Output</h3>
+      <table>
+        <tbody>
+          <tr><td><code>print(x)</code></td><td>print an int, float, bool, or string, with a newline</td></tr>
+          <tr><td><code>panic(s)</code></td><td>print a message and abort, for unrecoverable errors</td></tr>
+        </tbody>
+      </table>
+      <h3>Math</h3>
+      <table>
+        <tbody>
+          <tr><td><code>sqrt(x)</code>, <code>pow(x, y)</code></td><td>square root, power (float)</td></tr>
+          <tr><td><code>abs(x)</code></td><td>absolute value (int or float, returns the same type)</td></tr>
+          <tr><td><code>min(a, b)</code>, <code>max(a, b)</code></td><td>smaller / larger</td></tr>
+          <tr><td><code>floor(x)</code>, <code>ceil(x)</code></td><td>round down / up</td></tr>
+        </tbody>
+      </table>
+      <h3>Strings</h3>
+      <table>
+        <tbody>
+          <tr><td><code>charAt(s, i)</code></td><td>character code at index <code>i</code></td></tr>
+          <tr><td><code>substring(s, a, b)</code></td><td>the slice <code>[a, b)</code></td></tr>
+          <tr><td><code>toInt(s)</code>, <code>toFloat(s)</code></td><td>parse a numeric string</td></tr>
+          <tr><td><code>toString(n)</code></td><td>number to string (int or float)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- GC -->
+    <section id="gc">
+      <h2>Garbage collection</h2>
+      <p>Objects, arrays, and joined strings live on a garbage-collected heap, so you never free memory by hand. Collection is conservative mark-and-sweep and runs when you ask for it.</p>
+      <table>
+        <tbody>
+          <tr><td><code>collect()</code></td><td>run a collection pass now</td></tr>
+          <tr><td><code>__live()</code></td><td>how many heap objects are currently alive (handy for tests)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+      <h2>Projects &amp; CLI</h2>
+      <p>For more than a single file, scaffold a project (à la <code>cargo</code>). <code>tawlac new</code> creates a folder with a <code>Tawla.toml</code> manifest and <code>src/main.twl</code>; <code>tawlac run</code> with no file runs the project's entry point.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">terminal</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="shell">$ tawlac new myapp
+$ cd myapp
+$ tawlac run</code></pre>
+      </div>
+      <p>Split code across files with <code>import "other.twl";</code> — the path is relative to the importing file, and the <code>.twl</code> is optional.</p>
+    </section>
+
+    <footer class="footer">
+      <div class="row">
+        <div>Tawla — built from scratch with a hand-written lexer, parser, type checker, and LLVM codegen.</div>
+        <div>
+          <a href="https://pypi.org/project/tawla/" target="_blank" rel="noopener">PyPI</a> ·
+          <a href="https://github.com/HaddajiDev/tawla-lang" target="_blank" rel="noopener">GitHub</a> ·
+          <a href="#overview">Top</a>
+        </div>
+      </div>
+    </footer>
+
+   </div>
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
