@@ -641,13 +641,28 @@ class Main {
     <!-- PROJECTS -->
     <section id="projects">
       <h2>Projects &amp; CLI</h2>
-      <p>For more than a single file, scaffold a project (à la <code>cargo</code>). <code>tawlac new</code> creates a folder with a <code>Tawla.toml</code> manifest and <code>src/main.twl</code>; <code>tawlac run</code> with no file runs the project's entry point.</p>
+      <p>For more than a single file, scaffold a project (à la <code>cargo</code>). <code>tawlac new myapp</code> creates a new folder with a <code>Tawla.toml</code> manifest and <code>src/main.twl</code>, while <code>tawlac init</code> scaffolds the same layout in the current directory. Either way, <code>tawlac run</code> with no file runs the project's entry point.</p>
       <div class="code">
         <div class="code-head"><span class="dot"></span><span class="fname">terminal</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
-        <pre><code class="shell">$ tawlac new myapp
+        <pre><code class="shell">$ tawlac new myapp     # create ./myapp with a starter project
 $ cd myapp
+$ tawlac run           # runs the manifest's entry point
+
+$ mkdir hello && cd hello
+$ tawlac init          # scaffold a project in the current directory
 $ tawlac run</code></pre>
       </div>
+      <p>The full command set:</p>
+      <table>
+        <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>tawlac run [file]</code></td><td>JIT-compile and run a <code>.twl</code> file, or the project entry point if no file is given.</td></tr>
+          <tr><td><code>tawlac new &lt;name&gt;</code></td><td>Create a new project directory with a manifest and <code>src/main.twl</code>.</td></tr>
+          <tr><td><code>tawlac init</code></td><td>Scaffold a project in the current directory.</td></tr>
+          <tr><td><code>tawlac version</code></td><td>Print the installed <code>tawlac</code> version.</td></tr>
+          <tr><td><code>tawlac help [command]</code></td><td>Show general help, or help for a specific command.</td></tr>
+        </tbody>
+      </table>
       <p>Split code across files with <code>import "other.twl";</code> — the path is relative to the importing file, and the <code>.twl</code> is optional.</p>
     </section>
 
