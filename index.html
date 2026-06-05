@@ -138,6 +138,13 @@ $ tawlac new myapp       # scaffold a new project
 $ tawlac version         # print the version
 $ tawlac help            # or: tawlac help run</code></pre>
       </div>
+      <h3>No Python? Download a standalone binary</h3>
+      <p>Every release also ships a self-contained <code>tawlac</code> that bundles everything it needs — no Python required. Download the build for your OS from the <a href="https://github.com/HaddajiDev/tawla-lang/releases" target="_blank" rel="noopener">Releases page</a> and put it on your <code>PATH</code>:</p>
+      <ul>
+        <li><strong>Windows:</strong> download <code>tawlac-windows.exe</code>, rename it to <code>tawlac.exe</code>, drop it in a folder like <code>C:\tools\tawla</code>, and add that folder to your <code>Path</code> environment variable.</li>
+        <li><strong>macOS / Linux:</strong> download the binary, then <code>mv tawlac-&lt;os&gt; tawlac &amp;&amp; chmod +x tawlac &amp;&amp; sudo mv tawlac /usr/local/bin/</code>. On macOS, first run may need approval under Privacy &amp; Security (unsigned binary).</li>
+      </ul>
+      <p>After that, <code>tawlac run app.twl</code> works from any terminal — same command as the pip version.</p>
     </section>
 
     <!-- HELLO -->
