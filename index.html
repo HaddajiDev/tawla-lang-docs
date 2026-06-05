@@ -75,6 +75,7 @@
       <h4>Reference</h4>
       <a href="#builtins">Builtins</a>
       <a href="#gc">Garbage collection</a>
+      <a href="#errors">Exceptions</a>
       <a href="#projects">Projects &amp; CLI</a>
     </div>
     <p class="no-results">No matching topics.</p>
@@ -644,6 +645,26 @@ class Main {
           <tr><td><code>__live()</code></td><td>how many heap objects are currently alive (handy for tests)</td></tr>
         </tbody>
       </table>
+    </section>
+
+    <section id="errors">
+      <h2>Exceptions</h2>
+      <p>Wrap risky code in <code>fuck_around</code> (try) and recover in <code>find_out</code> (catch). The caught value <code>e</code> is the error message — a <code>string</code>. Raise your own with <code>throw "msg";</code>, and the built-in errors (<code>panic</code>, null dereference, array-out-of-bounds) are catchable too. A bare <code>find_out { }</code> ignores the message. An uncaught error prints its message and stops the program, exactly as before.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">errors.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">fuck_around {
+    throw "something broke";
+} find_out (e) {
+    print(e);                 // something broke
+}
+
+fuck_around {
+    int[] a = new int[2];
+    print(a[9]);              // out of bounds is catchable
+} find_out (e) {
+    print("recovered");
+}</code></pre>
+      </div>
     </section>
 
     <!-- PROJECTS -->
