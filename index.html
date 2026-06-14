@@ -575,6 +575,17 @@ class Main {
 }</code></pre>
       </div>
       <p>A <code>Request</code> exposes <code>method()</code>, <code>path()</code>, <code>body()</code>, <code>respond(status, body)</code>, and <code>respondJson(status, body)</code> (which sends <code>application/json</code>). You can also drive the loop yourself with <code>server.accept()</code>.</p>
+      <p>Routes capture path params with <code>:name</code>. Inside a handler, <code>req.param("id")</code>, <code>req.query("page")</code>, and <code>req.header("Authorization")</code> read the path param, query string, and request header — each returns <code>null</code> when absent.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">routes.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">class GetUser : Handler {
+    public void handle(Request req) {
+        req.respond(200, "user " + req.param("id"));
+    }
+}
+// ...
+router.get("/users/:id", new GetUser());</code></pre>
+      </div>
     </section>
 
     <!-- FETCH -->
