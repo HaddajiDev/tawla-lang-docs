@@ -70,6 +70,7 @@
       <a href="#json">JSON</a>
       <a href="#http">HTTP server</a>
       <a href="#fetch">HTTP client (fetch)</a>
+      <a href="#sql">SQLite</a>
     </div>
     <div class="nav-group">
       <h4>Reference</h4>
@@ -613,6 +614,24 @@ class Main {
       </div>
       <div class="note">Read a request body, parse its JSON, call another service, and respond with JSON — the whole loop, in a statically-typed JIT-compiled language whose parser and router are written in Tawla itself.</div>
       <hr class="section-rule" />
+    </section>
+
+    <section id="sql">
+      <h2>SQLite</h2>
+      <p><code>import "Sql.twl";</code> gives you an embedded SQL database. Open a <code>Db</code>, run statements, and read query results through a <code>Rows</code> cursor. Parameters bind by index with <code>?</code> placeholders (so there's no SQL injection), and SQL errors are thrown — catch them with <code>fuck_around</code> / <code>find_out</code>.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">db.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">Db db = new Db("app.db");
+db.exec("CREATE TABLE users(id INTEGER PRIMARY KEY, name TEXT, age INT)");
+
+Stmt ins = db.prepare("INSERT INTO users(name, age) VALUES (?, ?)");
+ins.bindString(0, "Ada"); ins.bindInt(1, 36); ins.exec();
+
+Stmt q = db.prepare("SELECT name FROM users WHERE age > ?");
+q.bindInt(0, 18);
+Rows r = q.query();
+while (r.next()) { print(r.getString("name")); }</code></pre>
+      </div>
     </section>
 
     <!-- BUILTINS -->
