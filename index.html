@@ -72,6 +72,7 @@
       <a href="#fetch">HTTP client (fetch)</a>
       <a href="#sql">SQLite</a>
       <a href="#essentials">Essentials</a>
+      <a href="#ergonomics">Interpolation &amp; JSON</a>
     </div>
     <div class="nav-group">
       <h4>Reference</h4>
@@ -645,6 +646,18 @@ string sig = hmacSha256("secret-key", id);
 writeFile("audit.log", id + " " + sig + "\n");
 string mode = getenv("APP_MODE");
 if (mode == null) { mode = "dev"; }</code></pre>
+      </div>
+    </section>
+
+    <section id="ergonomics">
+      <h2>Interpolation &amp; JSON</h2>
+      <p>String literals interpolate <code>${expr}</code> (a bare <code>$</code> is literal). And every class has an auto-generated <code>toJson()</code> that serializes its fields — primitives, nested objects, and arrays — so returning JSON is one call.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot"></span><span class="fname">ergonomics.twl</span><button class="copy-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="copy-label">Copy</span></button></div>
+        <pre><code class="twl">print("hi ${user.name}, ${n + 1} items");
+
+// every class can serialize itself
+req.respondJson(200, user.toJson());   // {"id":7,"name":"Ada",...}</code></pre>
       </div>
     </section>
 
